@@ -170,5 +170,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+quick.sh
 note.sh
 data/
+saved_model/
+images/
