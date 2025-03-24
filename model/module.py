@@ -125,7 +125,7 @@ class UpSampleBlock(nn.Module):
 
 
 class UNet(nn.Module):
-    def __init__(self, in_channels, out_channels, time_dim=256, device="cuda"):
+    def __init__(self, in_channels, out_channels, decoder_out = 3, time_dim=256, device="cuda"):
         super(UNet, self).__init__()
 
         self.time_dim = time_dim
@@ -150,7 +150,7 @@ class UNet(nn.Module):
         self.up3 = UpSampleBlock(out_channels, out_channels, time_dim=time_dim)
         self.sa6 = SelfAttentionBlock(out_channels)
 
-        self.decoder = nn.Conv2d(out_channels, 3, 1)
+        self.decoder = nn.Conv2d(out_channels, decoder_out, 1)
 
         self.device = device
 

@@ -172,6 +172,6 @@ cython_debug/
 
 quick.sh
 note.sh
-data/
-saved_model/
-images/
+data/*
+saved_models/*
+images/*

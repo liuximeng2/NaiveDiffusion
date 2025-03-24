@@ -2,7 +2,7 @@ import torch
 from tqdm import tqdm
 
 class Diffusion:
-    def __init__(self, noise_steps=1000, beta_start=1e-4, beta_end=0.02, img_size=32, device="cuda"):
+    def __init__(self, noise_steps=1000, beta_start=1e-4, beta_end=0.02, img_size=32, decoder_channel=3, device="cuda"):
         self.noise_steps = noise_steps
         self.beta_start = beta_start
         self.beta_end = beta_end
@@ -12,6 +12,8 @@ class Diffusion:
         self.beta = self.prepare_noise_schedule().to(device) # linear beta schedule
         self.alpha = 1. - self.beta
         self.alpha_hat = torch.cumprod(self.alpha, dim=0) # Cumulative product
+
+        self.decoder_channel = decoder_channel
 
     def prepare_noise_schedule(self):
         return torch.linspace(self.beta_start, self.beta_end, self.noise_steps)
@@ -34,7 +36,7 @@ class Diffusion:
     def sample(self, model, n): # this is the inferece step
         model.eval()
         with torch.no_grad():
-            x = torch.randn((n, 3, self.img_size, self.img_size)).to(self.device) # (n, 3, img_size, img_size)
+            x = torch.randn((n, self.decoder_channel, self.img_size, self.img_size)).to(self.device) # (n, 3, img_size, img_size)
             for i in tqdm(reversed(range(1, self.noise_steps)), position=0): # for T = T - 1, denoise for each step
                 t = (torch.ones(n) * i).long().to(self.device) # (n,)
                 predicted_noise = model(x, t) # given an image and a noise step, the model predicts the noise, predicted noise = model(x, t)
